@@ -9,3 +9,5 @@ Repository holding vagrant file to create an rdiffweb server.
 3. Run `vagrant up` within the project directory
 
 Once the creation of the VM is complete, you may access rdiffweb using **http://localhost:8080/**. Use the default username password: **admin / admin123**
+
+Also see  http://www.patrikdufresne.com/en/vagrant-rdiffweb/
