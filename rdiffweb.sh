@@ -32,6 +32,8 @@ COL_RED=$ESC_SEQ"31;01m"
 STATUS_FAIL="[$COL_RED${BOLD}FAIL${NORM}$COL_RESET]"
 STATUS_OK="[$COL_GREEN${BOLD} OK ${NORM}$COL_RESET]"
 
+declare -rx PROGNAME=${0##*/}
+declare -rx PROGPATH=$(readlink -e "${0%/*}")/
 
 function dependencies_install() {
   # Fix apt key
@@ -55,10 +57,10 @@ function dependencies_install() {
 function rdiffweb_install() {
   # Remote previous config
   if [ -e "/etc/rdiffweb/rdw.conf" ]; then
-    rm "/etc/rdiffweb/rdw.conf"
+    rm -Rf "/etc/rdiffweb/rdw.conf"
   fi
   if [ -e "/etc/rdiffweb/rdw.db" ]; then
-    rm "/etc/rdiffweb/rdw.db"
+    rm -Rf "/etc/rdiffweb/rdw.db"
   fi
   # Download rdiffweb
   wget --no-check-certificate -O rdiffweb.tar.gz "$RDIFFWEB_URL"
@@ -82,13 +84,20 @@ function rdiffweb_install() {
 }
 
 function data_install() {
-  # Make sure /vagrant is available
-  [ -e "/vagrant/testcases.tar.gz" ] || return 1
+  # Search testcases.tar.gz
+  TESTCASES=""
+  [ -e "${PROGPATH}testcases.tar.gz" ] && TESTCASES="${PROGPATH}testcases.tar.gz"
+  [ -e "/vagrant/testcases.tar.gz" ] && TESTCASES="/vagrant/testcases.tar.gz"
+  if [ -z "$TESTCASES" ]; then 
+    echo "testcases.tar.gz not found"
+    return 1
+  fi
+  [ -e "$TESTCASES" ] || return 1
 
   # Create default /backups directory
   mkdir -p "/backups"
   cd "/backups"
-  tar -zxvf "/vagrant/testcases.tar.gz"
+  tar -zxvf "$TESTCASES"
 
   # Refresh the repository list using `curl`
   COOKIE="/tmp/$$.cjar"
