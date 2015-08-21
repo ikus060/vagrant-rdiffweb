@@ -80,6 +80,12 @@ function rdiffweb_install() {
   /etc/init.d/rdiffweb start
   [ "$?" -eq "0" ] || return 1
 
+  # Wait 2 sec.
+  sleep 2
+
+  curl --location http://localhost:8080 > /dev/null
+  [ "$?" -eq "0" ] || return 1
+
   return 0
 }
 
@@ -100,11 +106,12 @@ function data_install() {
   tar -zxvf "$TESTCASES"
 
   # Refresh the repository list using `curl`
-  COOKIE="/tmp/$$.cjar"
+  export COOKIE="/tmp/$$.cjar"
   curl --cookie "$COOKIE" --cookie-jar "$COOKIE" \
-      --data "login=admin" --data "password=admin123" --location "http://localhost:8080/login/"
+      --data "login=admin" --data "password=admin123" --location "http://localhost:8080/login/" > /dev/null
   curl --cookie "$COOKIE" --cookie-jar "$COOKIE" \
-      --data "action=update_repos" --location "http://localhost:8080/prefs/#"
+      --data "action=update_repos" --location "http://localhost:8080/prefs/#" > /dev/null
+  rm "$COOKIE"
 }
 
 # Main process execute each step
