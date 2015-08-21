@@ -17,8 +17,8 @@
 # Variables
 RDIFFWEB_VERSION="develop"
 # Locations
-#RDIFFWEB_URL="https://github.com/ikus060/rdiffweb/archive/$RDIFFWEB_VERSION.tar.gz"
-RDIFFWEB_URL="http://git.patrikdufresne.com/pdsl/rdiffweb/repository/archive.tar.gz?ref=$RDIFFWEB_VERSION"
+RDIFFWEB_URL="https://github.com/ikus060/rdiffweb/archive/$RDIFFWEB_VERSION.tar.gz"
+#RDIFFWEB_URL="http://git.patrikdufresne.com/pdsl/rdiffweb/repository/archive.tar.gz?ref=$RDIFFWEB_VERSION"
 # Constant
 INSTALL_LOG="/tmp/rdiffweb-install.log"
 
