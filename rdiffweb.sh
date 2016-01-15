@@ -14,8 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#shopt -o -s xtrace
+
 # Variables
-RDIFFWEB_VERSION="develop"
+RDIFFWEB_VERSION="master"
 # Locations
 RDIFFWEB_URL="https://github.com/ikus060/rdiffweb/archive/$RDIFFWEB_VERSION.tar.gz"
 #RDIFFWEB_URL="http://git.patrikdufresne.com/pdsl/rdiffweb/repository/archive.tar.gz?ref=$RDIFFWEB_VERSION"
@@ -73,6 +75,16 @@ function rdiffweb_install() {
   python setup.py install
   [ "$?" -eq "0" ] || return 1
 
+  # Since 0.8.1, init script and confif are not deployed automatically.
+  if [ ! -e "/etc/init.d/rdiffweb" ]; then
+    cp extras/init/rdiffweb /etc/init.d/rdiffweb
+    chmod +x /etc/init.d/rdiffweb
+  fi
+  mkdir -p /etc/rdiffweb/
+  if [ ! -e "/etc/rdiffweb/rdw.conf" ]; then
+    cp rdw.conf /etc/rdiffweb/rdw.conf
+  fi
+
   # Add rdiffweb to startup
   update-rc.d rdiffweb defaults
 
@@ -111,7 +123,7 @@ function data_install() {
       --data "login=admin" --data "password=admin123" --location "http://localhost:8080/login/" > /dev/null
   curl --cookie "$COOKIE" --cookie-jar "$COOKIE" \
       --data "action=update_repos" --location "http://localhost:8080/prefs/#" > /dev/null
-  rm "$COOKIE"
+  [ -e "$COOKIE" ] && rm "$COOKIE"
 }
 
 # Main process execute each step
